@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Voice AI Stack — AI Therapist Provider Guide</title>
+<title>Voice AI Stack — AI Therapist Provider Guide v2</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -608,7 +608,7 @@
   <div class="hero">
     <div class="hero-tag">AI Therapist Voice Stack Research — Feb 2026</div>
     <h1>The <em>definitive</em> guide to<br>voice AI providers</h1>
-    <p class="hero-sub">STT · LLM · TTS — every major provider benchmarked for cost, latency, language coverage, and human-like quality. Built for real-time therapeutic conversations.</p>
+    <p class="hero-sub">STT · LLM · TTS — every major provider benchmarked for cost, latency, language coverage, and human-like quality. Includes single-provider options and WebRTC architecture for browser-native voice calls.</p>
   </div>
 
   <!-- PIPELINE DIAGRAM -->
@@ -652,15 +652,414 @@
 
   <!-- TABS -->
   <div class="tabs">
-    <div class="tab active" onclick="showTab('stt')">🎙 STT Providers</div>
-    <div class="tab" onclick="showTab('tts')">🔊 TTS Providers</div>
-    <div class="tab" onclick="showTab('endtoend')">⚡ End-to-End APIs</div>
+    <div class="tab active" onclick="showTab('singleprovider')">🔌 Single Provider</div>
+    <div class="tab" onclick="showTab('webrtc')">📡 WebRTC Build</div>
+    <div class="tab" onclick="showTab('stt')">🎙 STT Deep Dive</div>
+    <div class="tab" onclick="showTab('tts')">🔊 TTS Deep Dive</div>
+    <div class="tab" onclick="showTab('endtoend')">⚡ Bundled APIs</div>
     <div class="tab" onclick="showTab('costs')">💰 Cost Calc</div>
     <div class="tab" onclick="showTab('winner')">🏆 Best Stack</div>
   </div>
 
+  <!-- SINGLE PROVIDER TAB -->
+  <div id="tab-singleprovider" class="tab-content active">
+    <div class="section-label">All-in-one — one vendor for STT + LLM + TTS + WebRTC</div>
+    <p style="color:var(--text-dim);margin-bottom:28px;font-size:12px;max-width:680px;line-height:1.8;">If you want one bill, one SDK, and one support line, here are the providers that can do everything. Each trade-off is different — read carefully before committing.</p>
+
+    <!-- COMPARISON MATRIX -->
+    <div class="compare-table-wrap" style="margin-bottom:36px">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>STT</th>
+            <th>LLM</th>
+            <th>TTS</th>
+            <th>WebRTC Native</th>
+            <th>Voice Quality</th>
+            <th>Languages</th>
+            <th>Cost / 10 min</th>
+            <th>HIPAA</th>
+            <th>Verdict</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><div class="cell-provider">OpenAI</div><div class="cell-model">gpt-4o-realtime-preview</div></td>
+            <td><span class="tag tag-green">✓ Built-in</span></td>
+            <td><span class="tag tag-green">✓ GPT-4o</span></td>
+            <td><span class="tag tag-green">✓ Built-in</span></td>
+            <td><span class="tag tag-green">✓ Native</span></td>
+            <td>8.5 / 10</td>
+            <td><span class="tag tag-blue">100+ langs</span></td>
+            <td style="color:var(--accent4)"><strong>$0.65</strong></td>
+            <td><span class="tag tag-orange">Enterprise</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent2)">Runner-up</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">ElevenLabs</div><div class="cell-model">Conversational AI</div></td>
+            <td><span class="tag tag-green">✓ Built-in</span></td>
+            <td><span class="tag tag-blue">Bring own LLM</span></td>
+            <td><span class="tag tag-green">✓ Flash v2.5</span></td>
+            <td><span class="tag tag-green">✓ Native</span></td>
+            <td style="color:var(--accent)"><strong>9.5 / 10</strong></td>
+            <td><span class="tag tag-blue">32 langs</span></td>
+            <td>$0.50</td>
+            <td><span class="tag tag-orange">Enterprise</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent)">🏆 Best Voice</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Deepgram</div><div class="cell-model">Voice Agent API</div></td>
+            <td><span class="tag tag-green">✓ Nova-3</span></td>
+            <td><span class="tag tag-blue">Bring own LLM</span></td>
+            <td><span class="tag tag-green">✓ Aura-2</span></td>
+            <td><span class="tag tag-orange">WebSocket</span></td>
+            <td>8.0 / 10</td>
+            <td><span class="tag tag-orange">36 langs</span></td>
+            <td style="color:var(--accent)"><strong>$0.29</strong></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent3)">Cheapest</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Google Gemini</div><div class="cell-model">Live API (Multimodal)</div></td>
+            <td><span class="tag tag-green">✓ Built-in</span></td>
+            <td><span class="tag tag-green">✓ Gemini 2.0</span></td>
+            <td><span class="tag tag-green">✓ Built-in</span></td>
+            <td><span class="tag tag-green">✓ WebRTC</span></td>
+            <td>7.5 / 10</td>
+            <td><span class="tag tag-blue">100+ langs</span></td>
+            <td>$0.42</td>
+            <td><span class="tag tag-green">✓ GCP BAA</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--text-dim)">Emerging</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Hume AI</div><div class="cell-model">Empathic Voice Interface</div></td>
+            <td><span class="tag tag-green">✓ Built-in</span></td>
+            <td><span class="tag tag-green">✓ EVI LLM</span></td>
+            <td><span class="tag tag-green">✓ Emotional TTS</span></td>
+            <td><span class="tag tag-green">✓ Native</span></td>
+            <td>8.8 / 10</td>
+            <td><span class="tag tag-orange">EN + limited</span></td>
+            <td>$0.45</td>
+            <td><span class="tag tag-orange">TBD</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent2)">Therapy-fit</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Ultravox (Fixie)</div><div class="cell-model">Realtime Voice API</div></td>
+            <td><span class="tag tag-green">✓ Built-in</span></td>
+            <td><span class="tag tag-green">✓ Mistral-based</span></td>
+            <td><span class="tag tag-green">✓ Built-in</span></td>
+            <td><span class="tag tag-green">✓ WebRTC</span></td>
+            <td>7.8 / 10</td>
+            <td><span class="tag tag-orange">EN-first</span></td>
+            <td style="color:var(--accent)">$0.05/min</td>
+            <td><span class="tag tag-red">No</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--text-dim)">Budget E2E</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- DEEP DIVE CARDS -->
+    <div class="provider-grid">
+
+      <!-- ELEVENLABS -->
+      <div class="provider-card winner" style="grid-column: span 1">
+        <div class="card-badge badge-winner">🏆 Best Single Provider</div>
+        <div class="card-provider-name">ElevenLabs Conversational AI</div>
+        <div class="card-model-name">Flash v2.5 + Your LLM (Claude/GPT) + Scribe STT</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">TTFB (voice)</div><div class="metric-value good">75ms</div></div>
+          <div class="metric"><div class="metric-label">Cost / 10 min</div><div class="metric-value mid">~$0.50</div></div>
+          <div class="metric"><div class="metric-label">WebRTC SDK</div><div class="metric-value good">✓ Yes</div></div>
+          <div class="metric"><div class="metric-label">Voice Score</div><div class="metric-value good">9.5/10</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Voice warmth</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:98%"></div></div><span class="rating-score">9.8</span></div>
+          <div class="rating-item"><span class="rating-label">Setup simplicity</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:95%"></div></div><span class="rating-score">9.5</span></div>
+          <div class="rating-item"><span class="rating-label">Lang coverage</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:75%"></div></div><span class="rating-score">7.5</span></div>
+          <div class="rating-item"><span class="rating-label">Cost efficiency</span><div class="rating-bar-bg"><div class="rating-bar orange" style="width:62%"></div></div><span class="rating-score">6.2</span></div>
+        </div>
+        <div class="card-notes">
+          ✅ <strong style="color:var(--text)">Best for therapy</strong> — the one area where voice warmth outweighs cost. Their Conversational AI SDK gives you a single WebSocket/WebRTC connection, native interruption handling, barge-in, and turn-taking. You bring your own LLM (Claude strongly recommended). <strong>The browser SDK is 5 lines of JS.</strong> 3,000+ voices, custom voice cloning. STT is Scribe (high accuracy, 99 langs in batch — realtime is currently their own engine). HIPAA via enterprise plan.
+        </div>
+      </div>
+
+      <!-- OPENAI -->
+      <div class="provider-card runner-up">
+        <div class="card-badge badge-runner">Most Complete</div>
+        <div class="card-provider-name">OpenAI Realtime API</div>
+        <div class="card-model-name">gpt-4o-realtime-preview-2024-12-17</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Everything in 1</div><div class="metric-value good">✓ True</div></div>
+          <div class="metric"><div class="metric-label">Cost / 10 min</div><div class="metric-value bad">~$0.65</div></div>
+          <div class="metric"><div class="metric-label">WebRTC</div><div class="metric-value good">Native ✓</div></div>
+          <div class="metric"><div class="metric-label">Languages</div><div class="metric-value good">100+</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Voice warmth</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:85%"></div></div><span class="rating-score">8.5</span></div>
+          <div class="rating-item"><span class="rating-label">Setup simplicity</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:100%"></div></div><span class="rating-score">10</span></div>
+          <div class="rating-item"><span class="rating-label">Lang coverage</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:100%"></div></div><span class="rating-score">10</span></div>
+          <div class="rating-item"><span class="rating-label">Cost efficiency</span><div class="rating-bar-bg"><div class="rating-bar orange" style="width:45%"></div></div><span class="rating-score">4.5</span></div>
+        </div>
+        <div class="card-notes">
+          ⚡ Easiest to integrate — one API, one key, native WebRTC. STT + LLM + TTS + turn detection all built in. The voices (Alloy, Echo, Shimmer, Ash, Ballad, Coral…) are decent but not therapy-warm. Billing is unpredictable — system prompt tokens are priced per turn × number of turns, so a long session with a big system prompt gets expensive fast. <strong style="color:var(--accent3)">Mini variant cuts cost by ~60% but reduces voice naturalness.</strong> Best for prototyping or teams with an OpenAI relationship.
+        </div>
+      </div>
+
+      <!-- HUME -->
+      <div class="provider-card">
+        <div class="card-badge" style="background:rgba(126,232,162,0.08);color:var(--accent);border:1px solid rgba(126,232,162,0.2);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;position:absolute;top:16px;right:16px">Therapy-Specific</div>
+        <div class="card-provider-name">Hume AI — EVI 3</div>
+        <div class="card-model-name">Empathic Voice Interface</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Empathy model</div><div class="metric-value good">✓ Built-in</div></div>
+          <div class="metric"><div class="metric-label">Cost / 10 min</div><div class="metric-value mid">~$0.45</div></div>
+          <div class="metric"><div class="metric-label">Emotion detect</div><div class="metric-value good">✓ Real-time</div></div>
+          <div class="metric"><div class="metric-label">Languages</div><div class="metric-value bad">EN-first</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Emotional IQ</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:96%"></div></div><span class="rating-score">9.6</span></div>
+          <div class="rating-item"><span class="rating-label">Voice warmth</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:88%"></div></div><span class="rating-score">8.8</span></div>
+          <div class="rating-item"><span class="rating-label">Lang coverage</span><div class="rating-bar-bg"><div class="rating-bar orange" style="width:35%"></div></div><span class="rating-score">3.5</span></div>
+          <div class="rating-item"><span class="rating-label">HIPAA</span><div class="rating-bar-bg"><div class="rating-bar orange" style="width:50%"></div></div><span class="rating-score">TBD</span></div>
+        </div>
+        <div class="card-notes">
+          🧠 <strong style="color:var(--text)">Wildcard for therapy</strong> — literally designed for empathic AI. Detects 53 emotional states in the user's voice in real-time and adapts the AI's prosody and tone accordingly. EVI 3 can pick up if someone sounds anxious, sad, or frustrated and respond differently. WebRTC native. LLM is their own empathy-tuned model. <strong style="color:var(--accent3)">Limitation: English-only and HIPAA status unclear. Monitor closely.</strong>
+        </div>
+      </div>
+
+      <!-- DEEPGRAM SINGLE -->
+      <div class="provider-card">
+        <div class="card-badge badge-budget">Cheapest Single</div>
+        <div class="card-provider-name">Deepgram Voice Agent</div>
+        <div class="card-model-name">Nova-3 + Aura-2 + BYOLLM</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Cost / 10 min</div><div class="metric-value good">~$0.29</div></div>
+          <div class="metric"><div class="metric-label">Latency</div><div class="metric-value good">~300ms</div></div>
+          <div class="metric"><div class="metric-label">WebSocket</div><div class="metric-value good">✓ Yes</div></div>
+          <div class="metric"><div class="metric-label">HIPAA</div><div class="metric-value good">✓ Yes</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Voice warmth</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:80%"></div></div><span class="rating-score">8.0</span></div>
+          <div class="rating-item"><span class="rating-label">Cost</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:98%"></div></div><span class="rating-score">9.8</span></div>
+          <div class="rating-item"><span class="rating-label">Setup simplicity</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:78%"></div></div><span class="rating-score">7.8</span></div>
+        </div>
+        <div class="card-notes">
+          💸 Best if cost is the absolute #1 priority. One vendor, one WebSocket. Bring your own LLM (plug in Claude via their config). Aura-2 TTS is good but lacks ElevenLabs emotional range — may feel clinical for therapy. <strong style="color:var(--accent3)">Use if launching MVP/beta and upgrading TTS later.</strong> WebRTC not native — you pair with LiveKit or build your own WebRTC layer on top.
+        </div>
+      </div>
+
+      <!-- GEMINI LIVE -->
+      <div class="provider-card">
+        <div class="card-badge badge-runner">Dark Horse</div>
+        <div class="card-provider-name">Google Gemini Live</div>
+        <div class="card-model-name">Gemini 2.0 Flash Live API</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Cost / 10 min</div><div class="metric-value good">~$0.42</div></div>
+          <div class="metric"><div class="metric-label">Latency</div><div class="metric-value good">~200ms</div></div>
+          <div class="metric"><div class="metric-label">WebRTC</div><div class="metric-value good">✓ Native</div></div>
+          <div class="metric"><div class="metric-label">Languages</div><div class="metric-value good">100+</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Voice warmth</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:75%"></div></div><span class="rating-score">7.5</span></div>
+          <div class="rating-item"><span class="rating-label">Multilingual</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:100%"></div></div><span class="rating-score">10</span></div>
+          <div class="rating-item"><span class="rating-label">Maturity</span><div class="rating-bar-bg"><div class="rating-bar orange" style="width:60%"></div></div><span class="rating-score">6.0</span></div>
+        </div>
+        <div class="card-notes">
+          🔍 <strong style="color:var(--text)">Watch this one</strong> — Gemini Live API is maturing fast. Native WebRTC, free tier in preview, HIPAA via GCP BAA. Voices improving with each release. Best multilingual option in a single provider. <strong style="color:var(--accent3)">Still in preview as of Feb 2026 — not production-ready for therapy yet.</strong> Worth building a test integration.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SINGLE PROVIDER DECISION -->
+    <div class="section-label" style="margin-top:20px">Single provider decision tree</div>
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Scenario</th><th>Choose</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr class="highlight-row"><td>English-first, therapy warmth is #1</td><td style="color:var(--accent);font-weight:700">ElevenLabs Conv. AI + Claude</td><td>Best voice, simple SDK, bring your own empathetic LLM</td></tr>
+          <tr><td>Multilingual (10+ languages)</td><td style="color:var(--accent2);font-weight:700">OpenAI Realtime (mini or full)</td><td>100+ languages, single API, easiest integration</td></tr>
+          <tr><td>Cost is everything (MVP / beta)</td><td style="color:var(--accent3);font-weight:700">Deepgram Voice Agent + Claude</td><td>$0.29/session, HIPAA, solid quality</td></tr>
+          <tr><td>Emotion-aware therapy AI</td><td style="color:var(--accent);font-weight:700">Hume AI EVI 3</td><td>Only provider with built-in voice emotion detection</td></tr>
+          <tr><td>You need Google infra / compliance</td><td style="color:var(--accent2);font-weight:700">Gemini Live API</td><td>GCP HIPAA BAA, native WebRTC, improving fast</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WEBRTC TAB -->
+  <div id="tab-webrtc" class="tab-content">
+    <div class="section-label">WebRTC architecture — browser-native voice calls</div>
+    <p style="color:var(--text-dim);margin-bottom:28px;font-size:12px;max-width:700px;line-height:1.8;">WebRTC gives you sub-100ms audio delivery, no plugin needed, works on mobile browsers, and enables features like noise cancellation, echo suppression, and adaptive bitrate. Here's how to wire it all together.</p>
+
+    <!-- WEBRTC FLOW -->
+    <div class="pipeline" style="flex-direction:column;gap:0;padding:0;overflow:hidden;margin-bottom:36px">
+      <div style="padding:20px 28px;border-bottom:1px solid var(--border);background:var(--surface2)">
+        <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:14px">Browser Client (React / Next.js)</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+          <div style="background:var(--bg);border:1px solid var(--border);padding:14px;border-radius:2px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">Audio Capture</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent2)">getUserMedia()</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px">Browser mic API. Echo cancel + noise suppress flags built-in</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);padding:14px;border-radius:2px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">WebRTC Peer</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent2)">RTCPeerConnection</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px">ICE/STUN/TURN negotiation. Handles NAT traversal automatically</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);padding:14px;border-radius:2px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">Data Channel</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent2)">RTCDataChannel</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px">Send events (interrupts, session state, transcript) over same connection</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);padding:14px;border-radius:2px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">Audio Playback</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent2)">MediaStream → Speaker</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px">AI voice streamed directly via RTP. No audio gaps.</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;padding:12px;color:var(--muted);font-size:18px;background:var(--surface)">↕ WebRTC (SRTP encrypted, ~20ms audio packets)</div>
+      <div style="padding:20px 28px;background:var(--surface2)">
+        <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:14px">Your Backend / Voice AI Provider</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+          <div style="background:var(--bg);border:1px solid rgba(126,232,162,0.2);padding:14px;border-radius:2px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">WebRTC Server</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent)">LiveKit / OpenAI</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px">STUN/TURN handling, SFU for multi-party, SDP exchange</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid rgba(126,232,162,0.2);padding:14px;border-radius:2px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">STT Engine</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent)">Deepgram / ElevenLabs</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px">Audio RTP → transcript stream in ~150ms</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid rgba(126,232,162,0.2);padding:14px;border-radius:2px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">LLM</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent)">Claude Haiku / Sonnet</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px">Streaming tokens → TTS. First token in ~350ms</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid rgba(126,232,162,0.2);padding:14px;border-radius:2px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em">TTS Engine</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent)">ElevenLabs Flash</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px">Streams audio chunks back via RTP. 75ms TTFB.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SDK OPTIONS -->
+    <div class="section-label">WebRTC SDK options — choose your path</div>
+    <div class="arch-boxes" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:36px">
+
+      <div class="arch-box" style="border-left:3px solid var(--accent)">
+        <div class="arch-step">Option A — Easiest</div>
+        <div class="arch-tech">ElevenLabs SDK</div>
+        <div class="arch-model">@elevenlabs/react · @elevenlabs/client</div>
+        <div class="arch-detail">
+          <code style="display:block;background:var(--bg);padding:10px;border-radius:2px;font-size:10px;margin-bottom:10px;color:var(--accent2)">
+import { useConversation } from '@elevenlabs/react';<br><br>
+const conv = useConversation();<br>
+await conv.startSession({<br>
+&nbsp; agentId: 'your-agent-id'<br>
+});
+          </code>
+          That's it. WebRTC, VAD, interruptions, TTS all handled. Connect Claude as the LLM in their dashboard. Best DX, fastest time-to-production. No WebRTC code to write.
+        </div>
+      </div>
+
+      <div class="arch-box" style="border-left:3px solid var(--accent2)">
+        <div class="arch-step">Option B — Most Control</div>
+        <div class="arch-tech">LiveKit Agents</div>
+        <div class="arch-model">livekit-agents Python/JS SDK</div>
+        <div class="arch-detail">
+          <code style="display:block;background:var(--bg);padding:10px;border-radius:2px;font-size:10px;margin-bottom:10px;color:var(--accent2)">
+# Python agent<br>
+from livekit.agents import VoicePipelineAgent<br>
+from livekit.plugins import deepgram, elevenlabs, anthropic<br><br>
+agent = VoicePipelineAgent(<br>
+&nbsp; stt=deepgram.STT(),<br>
+&nbsp; llm=anthropic.LLM(),<br>
+&nbsp; tts=elevenlabs.TTS()<br>
+)
+          </code>
+          Full control of every component. Mix any STT/LLM/TTS. LiveKit handles WebRTC infra (open-source or cloud). Best for custom logic, emotion detection middleware, session memory injection.
+        </div>
+      </div>
+
+      <div class="arch-box" style="border-left:3px solid var(--accent3)">
+        <div class="arch-step">Option C — OpenAI Native</div>
+        <div class="arch-tech">OpenAI Realtime + WebRTC</div>
+        <div class="arch-model">openai SDK · WebRTC mode</div>
+        <div class="arch-detail">
+          <code style="display:block;background:var(--bg);padding:10px;border-radius:2px;font-size:10px;margin-bottom:10px;color:var(--accent2)">
+// Ephemeral token from server<br>
+const token = await fetch('/session').then(r=>r.json());<br><br>
+const pc = new RTCPeerConnection();<br>
+// Add mic track, create offer<br>
+// Connect to OpenAI WebRTC endpoint<br>
+// Done — all audio flows directly
+          </code>
+          OpenAI's native WebRTC mode. Audio goes directly browser → OpenAI server (no relay). Lowest latency for OpenAI. Ephemeral token model keeps API keys server-side. Everything else handled.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- WEBRTC CHECKLIST -->
+    <div class="section-label">What you need to build for WebRTC therapy calls</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:40px">
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">🖥️ Frontend (React/Next.js)</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Mic permission prompt</strong> — friendly UI asking for audio access before the session starts</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Connection state machine</strong> — idle → connecting → connected → speaking → listening → ended</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Volume visualizer</strong> — real-time waveform so user knows mic is active (reduces anxiety)</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Transcript overlay</strong> — optional live captions for accessibility / confirmation</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Mute / end call buttons</strong> — always visible, no need to say "goodbye" to stop</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Error recovery</strong> — graceful reconnect on network drop without losing session context</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent3);flex-shrink:0">⚠</span><div><strong>Safari/iOS workaround</strong> — getUserMedia needs to be called inside a user gesture; use a "Start Call" button, not auto-start</div></div>
+        </div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">⚙️ Backend (Node / Python)</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Ephemeral token endpoint</strong> — never expose API keys to client. Generate short-lived tokens server-side per session</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>STUN/TURN server</strong> — use LiveKit cloud or Twilio TURN for NAT traversal in corporate/firewall networks</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Session memory injection</strong> — pull last N sessions from DB, summarize via Claude, inject into system prompt at session start</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Transcript storage</strong> — save full session transcript (not audio) encrypted at rest. Needed for continuity + compliance</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent);flex-shrink:0">✓</span><div><strong>Crisis keyword detection</strong> — parallel classifier on transcript for self-harm language → alert + graceful handoff message</div></div>
+          <div style="display:flex;gap:10px;font-size:12px"><span style="color:var(--accent3);flex-shrink:0">⚠</span><div><strong>Do NOT store raw audio</strong> — transcripts only for HIPAA. Raw audio creates significant liability and storage cost</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LATENCY BREAKDOWN -->
+    <div class="section-label">Latency budget — what each millisecond costs you</div>
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Stage</th><th>ElevenLabs SDK</th><th>LiveKit + Deepgram + Claude + ElevenLabs</th><th>OpenAI Realtime WebRTC</th><th>Optimization tip</th></tr></thead>
+        <tbody>
+          <tr><td>Mic capture → send</td><td>~20ms</td><td>~20ms</td><td>~20ms</td><td>20ms audio chunks via WebRTC RTP</td></tr>
+          <tr><td>Network transit</td><td>~30–80ms</td><td>~30–80ms</td><td>~30–80ms</td><td>Edge servers help; use closest region</td></tr>
+          <tr><td>VAD / end-of-turn</td><td>~100ms</td><td>Deepgram Flux: ~260ms</td><td>Built-in: ~200ms</td><td>Deepgram Flux is slowest; OpenAI fastest</td></tr>
+          <tr><td>STT transcript</td><td>~150ms</td><td>~150ms</td><td>Bundled</td><td>Streaming partials reduce perceived latency</td></tr>
+          <tr><td>LLM first token</td><td>~300ms</td><td>~350ms (Claude Haiku)</td><td>~400ms</td><td>Haiku fastest; start TTS on first sentence fragment</td></tr>
+          <tr class="highlight-row"><td>TTS first audio</td><td>~75ms</td><td>~75ms (ElevenLabs)</td><td>Bundled ~100ms</td><td>Stream first audio chunk, rest follows</td></tr>
+          <tr><td><strong>Total perceived</strong></td><td style="color:var(--accent);font-weight:700">~550ms</td><td style="color:var(--accent);font-weight:700">~650ms</td><td style="color:var(--accent2);font-weight:700">~700ms</td><td>Human conversation turn-taking: ~200ms natural</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:12px;margin-bottom:40px">💡 At 550–700ms total latency, conversation feels natural. Below 500ms feels seamless. Above 1,000ms starts to feel robotic. All three paths are in the "natural" range.</p>
+
+  </div>
+
   <!-- STT TAB -->
-  <div id="tab-stt" class="tab-content active">
+  <div id="tab-stt" class="tab-content">
     <div class="section-label">Speech-to-Text providers</div>
 
     <div class="compare-table-wrap">
@@ -1254,51 +1653,52 @@
       </div>
       <div class="winner-why">
         <strong style="color:var(--text)">Why this stack wins for AI therapy:</strong><br><br>
-        Deepgram Nova-3 is the gold standard for STT in voice agents — sub-150ms TTFT, $0.0043/min (cheapest by far), HIPAA compliant, and ranked #1 on the independent VAQI benchmark. The Flux model adds native end-of-turn detection so the AI knows when someone's finished speaking — critical for natural conversation.<br><br>
-        Claude Haiku (or Sonnet for more nuanced therapy responses) is the ideal LLM — long context window for session memory, safe output defaults, and emotionally intelligent responses. Far better than GPT-4o-mini for therapeutic content. Pair with Anthropic's safety defaults.<br><br>
-        ElevenLabs Flash v2.5 is the only TTS that sounds warm and genuinely human enough for a therapeutic context. At 75ms TTFB it's the fastest quality voice. The emotional range of ElevenLabs voices is unmatched — this is the one non-negotiable premium spend. The 3,000+ voice library means you can offer users different voice personas.<br><br>
-        For telephony infrastructure: use <strong style="color:var(--accent)">Vapi.ai or Retell AI</strong> as the orchestration layer (like Ash). They handle phone numbers, SIP, WebSockets, call routing natively. Or build directly on LiveKit + Twilio for full control.
+        Deepgram Nova-3 is the gold standard for STT in voice agents — sub-150ms TTFT, $0.0043/min (cheapest by far), HIPAA compliant, and ranked #1 on the independent VAQI benchmark. The Flux model adds native end-of-turn detection — critical for natural conversation.<br><br>
+        Claude Haiku (or Sonnet for more nuanced therapy responses) is the ideal LLM — long context window for session memory, safe output defaults, and emotionally intelligent responses. Far better than GPT-4o-mini for therapeutic content.<br><br>
+        ElevenLabs Flash v2.5 is the only TTS that sounds warm and genuinely human enough for a therapeutic context. At 75ms TTFB it's the fastest quality voice. The emotional range of ElevenLabs voices is unmatched — this is the one non-negotiable premium spend.<br><br>
+        <strong style="color:var(--accent)">For WebRTC browser calls:</strong> Use <strong>LiveKit Agents</strong> as the WebRTC layer — open-source, battle-tested, and has first-class plugins for Deepgram + ElevenLabs + Anthropic. Your frontend uses the LiveKit JS SDK (5 lines), backend runs a Python agent that wires the full voice pipeline.<br><br>
+        <strong style="color:var(--accent)">Prefer 1 provider?</strong> Go with <strong>ElevenLabs Conversational AI + Claude</strong> ($0.50/session). Their React SDK handles WebRTC natively — connect Claude from their dashboard. Half the engineering, slightly higher cost.
       </div>
     </div>
 
     <!-- ARCHITECTURE -->
     <div class="section-label">Recommended architecture</div>
-    <div class="arch-boxes">
-      <div class="arch-box">
-        <div class="arch-step">Step 1 — Telephony</div>
-        <div class="arch-tech">Vapi.ai or Retell</div>
-        <div class="arch-model">WebRTC / SIP / PSTN</div>
-        <div class="arch-detail">Handles inbound/outbound calls, phone number provisioning, call routing, barge-in detection. Acts like Ash — users call a real number. $0.05–0.07/min overhead is worth the saved engineering time.</div>
+    <div class="arch-boxes" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="arch-box" style="border-left:3px solid var(--accent)">
+        <div class="arch-step">Step 1 — WebRTC Layer</div>
+        <div class="arch-tech">LiveKit (open-source)</div>
+        <div class="arch-model">livekit-server + JS SDK</div>
+        <div class="arch-detail">Handles WebRTC peer connections, TURN/STUN servers, NAT traversal, audio track routing, interruption events. Browser calls LiveKit room, backend agent joins same room. Self-host or use LiveKit Cloud (~$0.006/participant-min).</div>
       </div>
       <div class="arch-box">
         <div class="arch-step">Step 2 — Speech Recognition</div>
         <div class="arch-tech">Deepgram Nova-3</div>
         <div class="arch-model">nova-3 + flux (streaming)</div>
-        <div class="arch-detail">WebSocket streaming, ~150ms TTFT. $0.0043/min. End-of-turn detection with Flux model eliminates VAD latency. HIPAA BAA available. Handles accents, emotional speech, and noisy environments well.</div>
+        <div class="arch-detail">LiveKit's Deepgram plugin pipes audio directly. ~150ms TTFT. $0.0043/min. End-of-turn detection with Flux model. HIPAA BAA available. LiveKit plugin: <code style="color:var(--accent2)">livekit-plugins-deepgram</code></div>
       </div>
       <div class="arch-box">
         <div class="arch-step">Step 3 — LLM Brain</div>
         <div class="arch-tech">Claude Haiku / Sonnet</div>
         <div class="arch-model">claude-haiku-4-5 / claude-sonnet-4-5</div>
-        <div class="arch-detail">200K token context for full session memory. Streaming responses for low latency. Haiku for speed+cost ($0.80/$4 per 1M), Sonnet for deeper empathy and nuance. System prompt defines the therapist persona, safety guardrails, and CBT/DBT frameworks.</div>
+        <div class="arch-detail">200K token context for full session memory. Streaming tokens. Haiku for speed+cost, Sonnet for deeper empathy. System prompt holds therapist persona, CBT/DBT frameworks, crisis guardrails, and summarized past sessions.</div>
       </div>
       <div class="arch-box">
         <div class="arch-step">Step 4 — Voice Synthesis</div>
         <div class="arch-tech">ElevenLabs Flash v2.5</div>
         <div class="arch-model">eleven_flash_v2_5</div>
-        <div class="arch-detail">75ms TTFB, streaming synthesis. Choose a warm, calm female or male voice from the 3,000+ library. Custom voice cloning option lets you create a unique "therapist" persona voice. $0.050/1K chars.</div>
+        <div class="arch-detail">75ms TTFB, streaming audio back through LiveKit room to browser. Warm, emotionally nuanced voice — 3,000+ options. Custom voice cloning creates a unique therapist persona. LiveKit plugin: <code style="color:var(--accent2)">livekit-plugins-elevenlabs</code></div>
       </div>
       <div class="arch-box">
         <div class="arch-step">Step 5 — Session Memory</div>
         <div class="arch-tech">Memory Layer</div>
-        <div class="arch-model">Mem0 / Custom DB</div>
-        <div class="arch-detail">Store session transcripts, user mood patterns, therapy progress, past topics. Feed summarized context into each new session via the Claude system prompt. Enables continuity across calls — vital for therapy.</div>
+        <div class="arch-model">Mem0 / Postgres + pgvector</div>
+        <div class="arch-detail">Store session transcripts, mood patterns, therapy progress, past topics. Summarize at session end via Claude. Inject compressed summary into next session's system prompt. Enables true continuity — vital for therapy.</div>
       </div>
       <div class="arch-box">
         <div class="arch-step">Step 6 — Safety & Compliance</div>
         <div class="arch-tech">Guardrails</div>
         <div class="arch-model">Crisis detection + HIPAA</div>
-        <div class="arch-detail">Real-time keyword detection for crisis language → escalate to human. Anthropic's built-in safety. HIPAA BAAs from Deepgram + ElevenLabs (enterprise). All audio encrypted in transit. Do not store raw audio; store only transcripts.</div>
+        <div class="arch-detail">Parallel keyword classifier on transcript stream — flags self-harm language and triggers escalation message + human alert. HIPAA BAAs from Deepgram + ElevenLabs (enterprise). Transcripts encrypted at rest. Never store raw audio.</div>
       </div>
     </div>
 
@@ -1374,14 +1774,15 @@
 
 <script>
 function showTab(name) {
+  const ids = ['singleprovider','webrtc','stt','tts','endtoend','costs','winner'];
   document.querySelectorAll('.tab').forEach((t, i) => {
-    const ids = ['stt','tts','endtoend','costs','winner'];
     t.classList.toggle('active', ids[i] === name);
   });
   document.querySelectorAll('.tab-content').forEach(c => {
     c.classList.remove('active');
   });
-  document.getElementById('tab-' + name).classList.add('active');
+  const el = document.getElementById('tab-' + name);
+  if (el) el.classList.add('active');
 }
 </script>
 </body>
