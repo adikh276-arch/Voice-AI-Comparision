@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice AI Stack — AI Therapist Provider Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d12;
+    --surface: #111620;
+    --surface2: #171d2a;
+    --border: rgba(255,255,255,0.07);
+    --accent: #7ee8a2;
+    --accent2: #5bc8f5;
+    --accent3: #f5a623;
+    --accent4: #e05c5c;
+    --muted: #5a6478;
+    --text: #dde3ef;
+    --text-dim: #8898aa;
+    --winner: #7ee8a2;
+    --runner: #5bc8f5;
+    --budget: #f5a623;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Background noise texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    padding: 80px 0 60px;
+    position: relative;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(126,232,162,0.08);
+    border: 1px solid rgba(126,232,162,0.2);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 2px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(42px, 6vw, 78px);
+    line-height: 1.05;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    color: var(--text-dim);
+    font-size: 14px;
+    max-width: 560px;
+    line-height: 1.8;
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 48px 0;
+  }
+
+  /* SECTION HEADERS */
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  /* PIPELINE DIAGRAM */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px 36px;
+    margin-bottom: 48px;
+    overflow-x: auto;
+  }
+  .pipeline-node {
+    text-align: center;
+    flex: 1;
+    min-width: 120px;
+    padding: 16px 12px;
+    position: relative;
+  }
+  .pipeline-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .pipeline-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .pipeline-desc {
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .pipeline-arrow {
+    color: var(--muted);
+    font-size: 20px;
+    flex-shrink: 0;
+    padding: 0 8px;
+  }
+  .pipeline-latency {
+    font-size: 10px;
+    color: var(--accent);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+  .tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+    margin-bottom: -1px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* PROVIDER CARDS */
+  .provider-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .provider-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .provider-card:hover {
+    border-color: rgba(255,255,255,0.14);
+    transform: translateY(-1px);
+  }
+  .provider-card.winner {
+    border-color: rgba(126,232,162,0.3);
+    background: linear-gradient(135deg, rgba(126,232,162,0.04) 0%, var(--surface) 60%);
+  }
+  .provider-card.runner-up {
+    border-color: rgba(91,200,245,0.25);
+  }
+  .card-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+  }
+  .badge-winner { background: rgba(126,232,162,0.15); color: var(--accent); border: 1px solid rgba(126,232,162,0.3); }
+  .badge-runner { background: rgba(91,200,245,0.12); color: var(--accent2); border: 1px solid rgba(91,200,245,0.25); }
+  .badge-budget { background: rgba(245,166,35,0.12); color: var(--accent3); border: 1px solid rgba(245,166,35,0.25); }
+  .badge-caution { background: rgba(224,92,92,0.12); color: var(--accent4); border: 1px solid rgba(224,92,92,0.25); }
+
+  .card-provider-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .card-model-name {
+    font-size: 11px;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 16px;
+    letter-spacing: 0.04em;
+  }
+
+  .metrics-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .metric {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    border-radius: 2px;
+  }
+  .metric-label {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .metric-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .metric-value.good { color: var(--accent); }
+  .metric-value.mid { color: var(--accent3); }
+  .metric-value.bad { color: var(--accent4); }
+
+  /* STAR RATINGS */
+  .rating-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .rating-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+  }
+  .rating-label {
+    width: 110px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .rating-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .rating-bar {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+  .rating-bar.green { background: var(--accent); }
+  .rating-bar.blue { background: var(--accent2); }
+  .rating-bar.orange { background: var(--accent3); }
+  .rating-score {
+    width: 24px;
+    text-align: right;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .card-notes {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+    font-style: italic;
+  }
+
+  /* MEGA COMPARISON TABLE */
+  .compare-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .compare-table th {
+    background: var(--surface2);
+    padding: 14px 16px;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .compare-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .compare-table tr.highlight-row td { background: rgba(126,232,162,0.04); }
+  .compare-table tr.highlight-row td:first-child {
+    border-left: 2px solid var(--accent);
+  }
+
+  .cell-provider {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .cell-model {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 1px;
+  }
+  .tag-green { background: rgba(126,232,162,0.12); color: var(--accent); }
+  .tag-blue { background: rgba(91,200,245,0.12); color: var(--accent2); }
+  .tag-orange { background: rgba(245,166,35,0.12); color: var(--accent3); }
+  .tag-red { background: rgba(224,92,92,0.12); color: var(--accent4); }
+
+  .dot { font-size: 16px; }
+  .dot-green { color: var(--accent); }
+  .dot-orange { color: var(--accent3); }
+  .dot-red { color: var(--accent4); }
+
+  /* WINNER SECTION */
+  .winner-section {
+    background: linear-gradient(135deg, rgba(126,232,162,0.06) 0%, rgba(91,200,245,0.04) 100%);
+    border: 1px solid rgba(126,232,162,0.2);
+    border-radius: 4px;
+    padding: 40px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .winner-section::before {
+    content: '★';
+    position: absolute;
+    top: -20px;
+    right: 40px;
+    font-size: 120px;
+    color: rgba(126,232,162,0.04);
+    font-family: serif;
+  }
+  .winner-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--accent);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+  .winner-stack {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  .winner-stack span { color: var(--accent); }
+  .winner-stack .sep { color: var(--muted); font-weight: 400; margin: 0 8px; }
+  .winner-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .winner-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .winner-meta-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  .winner-meta-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .winner-why {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    max-width: 700px;
+    border-top: 1px solid rgba(126,232,162,0.12);
+    padding-top: 20px;
+  }
+
+  /* COST CALC */
+  .cost-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .cost-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+  }
+  .cost-card-header {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cost-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .cost-line:last-child { border-bottom: none; }
+  .cost-desc { color: var(--text-dim); }
+  .cost-val { font-weight: 500; font-family: 'DM Mono', monospace; }
+  .cost-total {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+  }
+  .cost-total .total-val { color: var(--accent); font-size: 18px; }
+
+  /* ARCHITECTURE */
+  .arch-boxes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  .arch-box {
+    background: var(--surface);
+    padding: 28px 24px;
+  }
+  .arch-step {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .arch-tech {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .arch-model {
+    font-size: 11px;
+    color: var(--accent2);
+    margin-bottom: 10px;
+    font-family: 'DM Mono', monospace;
+  }
+  .arch-detail {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  /* LANGUAGE GRID */
+  .lang-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 40px;
+  }
+  .lang-pill {
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .lang-pill.supported {
+    background: rgba(126,232,162,0.08);
+    border-color: rgba(126,232,162,0.2);
+    color: var(--accent);
+  }
+
+  /* FOOTER NOTE */
+  .footnote {
+    color: var(--muted);
+    font-size: 11px;
+    padding: 32px 0 48px;
+    border-top: 1px solid var(--border);
+    line-height: 1.8;
+  }
+
+  /* SCROLL ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .provider-card, .cost-card, .winner-section, .arch-box {
+    animation: fadeUp 0.5s ease both;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">AI Therapist Voice Stack Research — Feb 2026</div>
+    <h1>The <em>definitive</em> guide to<br>voice AI providers</h1>
+    <p class="hero-sub">STT · LLM · TTS — every major provider benchmarked for cost, latency, language coverage, and human-like quality. Built for real-time therapeutic conversations.</p>
+  </div>
+
+  <!-- PIPELINE DIAGRAM -->
+  <div class="section-label">How a voice call works</div>
+  <div class="pipeline">
+    <div class="pipeline-node">
+      <div class="pipeline-icon">📞</div>
+      <div class="pipeline-label">User speaks</div>
+      <div class="pipeline-desc">Phone/VOIP call</div>
+      <div class="pipeline-latency">0ms</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node">
+      <div class="pipeline-icon">🎙️</div>
+      <div class="pipeline-label">STT / ASR</div>
+      <div class="pipeline-desc">Audio → Text</div>
+      <div class="pipeline-latency">~150–300ms</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node">
+      <div class="pipeline-icon">🧠</div>
+      <div class="pipeline-label">LLM</div>
+      <div class="pipeline-desc">Reasoning + response</div>
+      <div class="pipeline-latency">~350–800ms</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node">
+      <div class="pipeline-icon">🔊</div>
+      <div class="pipeline-label">TTS</div>
+      <div class="pipeline-desc">Text → Voice</div>
+      <div class="pipeline-latency">~75–200ms</div>
+    </div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node">
+      <div class="pipeline-icon">💬</div>
+      <div class="pipeline-label">AI speaks</div>
+      <div class="pipeline-desc">Streamed to user</div>
+      <div class="pipeline-latency">Total: ~600ms–1.5s</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('stt')">🎙 STT Providers</div>
+    <div class="tab" onclick="showTab('tts')">🔊 TTS Providers</div>
+    <div class="tab" onclick="showTab('endtoend')">⚡ End-to-End APIs</div>
+    <div class="tab" onclick="showTab('costs')">💰 Cost Calc</div>
+    <div class="tab" onclick="showTab('winner')">🏆 Best Stack</div>
+  </div>
+
+  <!-- STT TAB -->
+  <div id="tab-stt" class="tab-content active">
+    <div class="section-label">Speech-to-Text providers</div>
+
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Provider / Model</th>
+            <th>Latency (TTFT)</th>
+            <th>WER (Real-world)</th>
+            <th>Languages</th>
+            <th>Price / min</th>
+            <th>Streaming</th>
+            <th>HIPAA</th>
+            <th>Voice Agents</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><div class="cell-provider">Deepgram</div><div class="cell-model">Nova-3 + Flux</div></td>
+            <td><span class="dot dot-green">●</span> <strong>~150ms</strong></td>
+            <td><span style="color:var(--accent)">18.3% WER</span></td>
+            <td><span class="tag tag-green">36 langs</span></td>
+            <td><strong style="color:var(--accent)">$0.0043</strong></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-green">Best</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent)">9.5/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">AssemblyAI</div><div class="cell-model">Universal-2</div></td>
+            <td><span class="dot dot-orange">●</span> ~300–600ms</td>
+            <td><span style="color:var(--accent)">14.5% WER ★</span></td>
+            <td><span class="tag tag-blue">99 langs</span></td>
+            <td>$0.015/min</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-blue">Good</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent2)">9.0/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">OpenAI</div><div class="cell-model">gpt-4o-transcribe</div></td>
+            <td><span class="dot dot-orange">●</span> ~320ms</td>
+            <td>21.4% WER</td>
+            <td><span class="tag tag-blue">100+ langs</span></td>
+            <td>$0.006/min</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-orange">Enterprise</span></td>
+            <td><span class="tag tag-blue">Good</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">8.0/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Google Cloud</div><div class="cell-model">Speech-to-Text v2</div></td>
+            <td><span class="dot dot-orange">●</span> ~250ms</td>
+            <td>~20% WER</td>
+            <td><span class="tag tag-blue">125 langs</span></td>
+            <td>$0.016/min</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-blue">Good</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">7.5/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">ElevenLabs</div><div class="cell-model">Scribe</div></td>
+            <td><span class="dot dot-red">●</span> Batch only</td>
+            <td><span style="color:var(--accent)">15.1% WER</span></td>
+            <td><span class="tag tag-blue">99 langs</span></td>
+            <td>$0.0067/min</td>
+            <td><span class="tag tag-red">✗ No</span></td>
+            <td><span class="tag tag-orange">Enterprise</span></td>
+            <td><span class="tag tag-red">No RT</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent4)">5.0/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Microsoft Azure</div><div class="cell-model">Speech SDK</div></td>
+            <td><span class="dot dot-orange">●</span> ~200ms</td>
+            <td>~19% WER</td>
+            <td><span class="tag tag-blue">100+ langs</span></td>
+            <td>$0.016/min</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-blue">Good</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">7.0/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Speechmatics</div><div class="cell-model">Ursa 2</div></td>
+            <td><span class="dot dot-orange">●</span> ~250ms</td>
+            <td>~16% WER</td>
+            <td><span class="tag tag-blue">50+ langs</span></td>
+            <td>$0.012/min</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-orange">On-prem</span></td>
+            <td><span class="tag tag-blue">Good</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">7.0/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">AWS Transcribe</div><div class="cell-model">Medical variant</div></td>
+            <td><span class="dot dot-orange">●</span> ~350ms</td>
+            <td>~22% WER</td>
+            <td><span class="tag tag-orange">75 langs</span></td>
+            <td>$0.024/min</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-orange">OK</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">6.5/10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="provider-grid">
+      <div class="provider-card winner">
+        <div class="card-badge badge-winner">Best for Voice Agents</div>
+        <div class="card-provider-name">Deepgram</div>
+        <div class="card-model-name">Nova-3 / Flux</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Latency TTFT</div><div class="metric-value good">~150ms</div></div>
+          <div class="metric"><div class="metric-label">Price / min</div><div class="metric-value good">$0.0043</div></div>
+          <div class="metric"><div class="metric-label">Languages</div><div class="metric-value">36</div></div>
+          <div class="metric"><div class="metric-label">WER</div><div class="metric-value good">18.3%</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Speed</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:97%"></div></div><span class="rating-score">9.7</span></div>
+          <div class="rating-item"><span class="rating-label">Accuracy</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:88%"></div></div><span class="rating-score">8.8</span></div>
+          <div class="rating-item"><span class="rating-label">Cost efficiency</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:98%"></div></div><span class="rating-score">9.8</span></div>
+          <div class="rating-item"><span class="rating-label">Lang coverage</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:72%"></div></div><span class="rating-score">7.2</span></div>
+          <div class="rating-item"><span class="rating-label">HIPAA ready</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:100%"></div></div><span class="rating-score">✓</span></div>
+        </div>
+        <div class="card-notes">Nova-3 trained on 47B tokens. Flux adds native end-of-turn detection (~260ms) eliminating need for separate VAD. The cheapest, fastest option for voice agents. On-prem available. Ranked #1 in VAQI index.</div>
+      </div>
+
+      <div class="provider-card runner-up">
+        <div class="card-badge badge-runner">Best Accuracy</div>
+        <div class="card-provider-name">AssemblyAI</div>
+        <div class="card-model-name">Universal-2 / Slam-1</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Latency TTFT</div><div class="metric-value mid">~300ms</div></div>
+          <div class="metric"><div class="metric-label">Price / min</div><div class="metric-value mid">$0.015</div></div>
+          <div class="metric"><div class="metric-label">Languages</div><div class="metric-value good">99</div></div>
+          <div class="metric"><div class="metric-label">WER</div><div class="metric-value good">14.5%</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Speed</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:72%"></div></div><span class="rating-score">7.2</span></div>
+          <div class="rating-item"><span class="rating-label">Accuracy</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:96%"></div></div><span class="rating-score">9.6</span></div>
+          <div class="rating-item"><span class="rating-label">Cost efficiency</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:62%"></div></div><span class="rating-score">6.2</span></div>
+          <div class="rating-item"><span class="rating-label">Lang coverage</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:95%"></div></div><span class="rating-score">9.5</span></div>
+        </div>
+        <div class="card-notes">Lowest WER (14.5%) of any streaming model. Excellent for medical/clinical contexts with built-in domain models. Speaker diarization built-in. Great for therapy contexts where accuracy matters most.</div>
+      </div>
+
+      <div class="provider-card">
+        <div class="card-badge badge-runner">Multilingual King</div>
+        <div class="card-provider-name">OpenAI</div>
+        <div class="card-model-name">gpt-4o-transcribe</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Latency TTFT</div><div class="metric-value mid">~320ms</div></div>
+          <div class="metric"><div class="metric-label">Price / min</div><div class="metric-value good">$0.006</div></div>
+          <div class="metric"><div class="metric-label">Languages</div><div class="metric-value good">100+</div></div>
+          <div class="metric"><div class="metric-label">WER</div><div class="metric-value mid">21.4%</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Speed</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:70%"></div></div><span class="rating-score">7.0</span></div>
+          <div class="rating-item"><span class="rating-label">Accuracy</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:75%"></div></div><span class="rating-score">7.5</span></div>
+          <div class="rating-item"><span class="rating-label">Cost efficiency</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:84%"></div></div><span class="rating-score">8.4</span></div>
+          <div class="rating-item"><span class="rating-label">Lang coverage</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:100%"></div></div><span class="rating-score">10</span></div>
+        </div>
+        <div class="card-notes">Broadest language support (100+). Good when unified OpenAI billing is preferred. gpt-4o-mini-transcribe is faster and cheaper but less accurate. Useful fallback for rare languages.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TTS TAB -->
+  <div id="tab-tts" class="tab-content">
+    <div class="section-label">Text-to-Speech providers</div>
+
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Provider / Model</th>
+            <th>TTFB Latency</th>
+            <th>Human-like Score</th>
+            <th>Voices</th>
+            <th>Languages</th>
+            <th>Price / 1K chars</th>
+            <th>Streaming</th>
+            <th>Voice Clone</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><div class="cell-provider">ElevenLabs</div><div class="cell-model">Flash v2.5</div></td>
+            <td><span class="dot dot-green">●</span> <strong>~75ms</strong></td>
+            <td><strong style="color:var(--accent)">9.8 / 10</strong></td>
+            <td>3,000+</td>
+            <td><span class="tag tag-blue">32 langs</span></td>
+            <td>$0.050</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent)">9.5/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Cartesia</div><div class="cell-model">Sonic</div></td>
+            <td><span class="dot dot-green">●</span> <strong>40–95ms</strong></td>
+            <td><strong>8.8 / 10</strong></td>
+            <td>100+</td>
+            <td><span class="tag tag-orange">9 langs</span></td>
+            <td>$0.038</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--accent2)">9.0/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Deepgram</div><div class="cell-model">Aura-2</div></td>
+            <td><span class="dot dot-green">●</span> ~90ms</td>
+            <td>8.0 / 10</td>
+            <td>12</td>
+            <td><span class="tag tag-orange">7 langs</span></td>
+            <td>$0.030</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-red">✗ No</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">8.5/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">OpenAI</div><div class="cell-model">TTS-1 / TTS-1-HD</div></td>
+            <td><span class="dot dot-orange">●</span> ~200ms</td>
+            <td>8.2 / 10</td>
+            <td>11</td>
+            <td><span class="tag tag-blue">50+ langs</span></td>
+            <td>$0.015 / $0.030</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-red">✗ No</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">7.5/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">PlayHT</div><div class="cell-model">Play Dialog / 3.0</div></td>
+            <td><span class="dot dot-orange">●</span> ~300ms</td>
+            <td>8.5 / 10</td>
+            <td>900+</td>
+            <td><span class="tag tag-blue">142 langs</span></td>
+            <td>$0.010–0.030</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">7.5/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Google Cloud</div><div class="cell-model">WaveNet / Studio</div></td>
+            <td><span class="dot dot-orange">●</span> ~200ms</td>
+            <td>7.8 / 10</td>
+            <td>380+</td>
+            <td><span class="tag tag-blue">50+ langs</span></td>
+            <td>$0.004–0.016</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-red">Limited</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">7.0/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Microsoft Azure</div><div class="cell-model">Neural TTS</div></td>
+            <td><span class="dot dot-orange">●</span> ~200ms</td>
+            <td>8.0 / 10</td>
+            <td>400+</td>
+            <td><span class="tag tag-blue">140+ langs</span></td>
+            <td>$0.004–0.016</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-orange">Limited</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">7.5/10</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Amazon Polly</div><div class="cell-model">Neural</div></td>
+            <td><span class="dot dot-orange">●</span> ~200ms</td>
+            <td>7.0 / 10</td>
+            <td>60+</td>
+            <td><span class="tag tag-blue">30+ langs</span></td>
+            <td>$0.004–0.016</td>
+            <td><span class="tag tag-green">✓ Yes</span></td>
+            <td><span class="tag tag-red">✗ No</span></td>
+            <td style="font-family:'Syne',sans-serif;font-weight:800;">6.0/10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="provider-grid">
+      <div class="provider-card winner">
+        <div class="card-badge badge-winner">Most Human-like</div>
+        <div class="card-provider-name">ElevenLabs</div>
+        <div class="card-model-name">Flash v2.5 (for realtime)</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">TTFB</div><div class="metric-value good">~75ms</div></div>
+          <div class="metric"><div class="metric-label">Price / 1K chars</div><div class="metric-value mid">$0.050</div></div>
+          <div class="metric"><div class="metric-label">Voice library</div><div class="metric-value good">3,000+</div></div>
+          <div class="metric"><div class="metric-label">Human ELO</div><div class="metric-value good">★ #1</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Human-likeness</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:98%"></div></div><span class="rating-score">9.8</span></div>
+          <div class="rating-item"><span class="rating-label">Emotional range</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:97%"></div></div><span class="rating-score">9.7</span></div>
+          <div class="rating-item"><span class="rating-label">Speed</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:96%"></div></div><span class="rating-score">9.6</span></div>
+          <div class="rating-item"><span class="rating-label">Cost efficiency</span><div class="rating-bar-bg"><div class="rating-bar orange" style="width:60%"></div></div><span class="rating-score">6.0</span></div>
+          <div class="rating-item"><span class="rating-label">Lang coverage</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:75%"></div></div><span class="rating-score">7.5</span></div>
+        </div>
+        <div class="card-notes">Industry leader for therapeutic voice — warm, natural, emotionally nuanced. Flash v2.5 hits 75ms TTFB ideal for realtime. Multilingual v2/v3 available for higher quality at ~1-2s. For an AI therapist, voice warmth matters more than most use cases.</div>
+      </div>
+
+      <div class="provider-card runner-up">
+        <div class="card-badge badge-runner">Best Latency</div>
+        <div class="card-provider-name">Cartesia</div>
+        <div class="card-model-name">Sonic</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">TTFB</div><div class="metric-value good">40–95ms</div></div>
+          <div class="metric"><div class="metric-label">Price / 1K chars</div><div class="metric-value good">$0.038</div></div>
+          <div class="metric"><div class="metric-label">Voices</div><div class="metric-value">100+</div></div>
+          <div class="metric"><div class="metric-label">Languages</div><div class="metric-value mid">9</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Human-likeness</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:88%"></div></div><span class="rating-score">8.8</span></div>
+          <div class="rating-item"><span class="rating-label">Emotional range</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:80%"></div></div><span class="rating-score">8.0</span></div>
+          <div class="rating-item"><span class="rating-label">Speed</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:99%"></div></div><span class="rating-score">9.9</span></div>
+          <div class="rating-item"><span class="rating-label">Cost efficiency</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:76%"></div></div><span class="rating-score">7.6</span></div>
+        </div>
+        <div class="card-notes">Purpose-built for realtime conversations. Lowest latency under load (40ms). More affordable than ElevenLabs. Language coverage is the main limitation — only 9 currently. Good budget alternative.</div>
+      </div>
+
+      <div class="provider-card">
+        <div class="card-badge badge-budget">Budget Pick</div>
+        <div class="card-provider-name">Deepgram Aura-2</div>
+        <div class="card-model-name">Enterprise TTS</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">TTFB</div><div class="metric-value good">~90ms</div></div>
+          <div class="metric"><div class="metric-label">Price / 1K chars</div><div class="metric-value good">$0.030</div></div>
+          <div class="metric"><div class="metric-label">Voices</div><div class="metric-value mid">12</div></div>
+          <div class="metric"><div class="metric-label">Languages</div><div class="metric-value bad">7</div></div>
+        </div>
+        <div class="rating-row">
+          <div class="rating-item"><span class="rating-label">Human-likeness</span><div class="rating-bar-bg"><div class="rating-bar blue" style="width:80%"></div></div><span class="rating-score">8.0</span></div>
+          <div class="rating-item"><span class="rating-label">Emotional range</span><div class="rating-bar-bg"><div class="rating-bar orange" style="width:65%"></div></div><span class="rating-score">6.5</span></div>
+          <div class="rating-item"><span class="rating-label">Cost efficiency</span><div class="rating-bar-bg"><div class="rating-bar green" style="width:90%"></div></div><span class="rating-score">9.0</span></div>
+        </div>
+        <div class="card-notes">Great if you're already using Deepgram for STT. Unified billing is a plus. Voice quality is good but not ElevenLabs-level warmth. Limited to 7 languages — problematic if serving diverse users.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- END TO END TAB -->
+  <div id="tab-endtoend" class="tab-content">
+    <div class="section-label">All-in-one voice APIs (STT + LLM + TTS bundled)</div>
+
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Model</th>
+            <th>Cost / hr</th>
+            <th>Latency</th>
+            <th>Human-like</th>
+            <th>Languages</th>
+            <th>HIPAA</th>
+            <th>Telephony</th>
+            <th>Best For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><div class="cell-provider">Deepgram</div><div class="cell-model">Voice Agent API</div></td>
+            <td>Nova-3 + Aura-2 + any LLM</td>
+            <td><strong style="color:var(--accent)">$4.50/hr</strong></td>
+            <td><span class="tag tag-green">~300ms</span></td>
+            <td>8.0/10</td>
+            <td>36</td>
+            <td><span class="tag tag-green">✓</span></td>
+            <td><span class="tag tag-green">WebSocket</span></td>
+            <td>Scale, cost-predictable</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">OpenAI</div><div class="cell-model">Realtime API</div></td>
+            <td>gpt-4o-realtime</td>
+            <td><span style="color:var(--accent4)"><strong>$18/hr</strong></span></td>
+            <td><span class="tag tag-orange">~400ms</span></td>
+            <td>8.5/10</td>
+            <td>100+</td>
+            <td><span class="tag tag-orange">Enterprise</span></td>
+            <td><span class="tag tag-green">WebSocket</span></td>
+            <td>Multilingual quality</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">OpenAI</div><div class="cell-model">Realtime Mini</div></td>
+            <td>gpt-4o-mini-realtime</td>
+            <td>~$5–8/hr</td>
+            <td><span class="tag tag-orange">~400ms</span></td>
+            <td>7.8/10</td>
+            <td>100+</td>
+            <td><span class="tag tag-orange">Enterprise</span></td>
+            <td><span class="tag tag-green">WebSocket</span></td>
+            <td>Budget OpenAI option</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">ElevenLabs</div><div class="cell-model">Conversational AI</div></td>
+            <td>Flash v2.5 + Claude/GPT</td>
+            <td>~$5.90/hr</td>
+            <td><span class="tag tag-green">~250ms</span></td>
+            <td><strong style="color:var(--accent)">9.5/10</strong></td>
+            <td>32</td>
+            <td><span class="tag tag-orange">Enterprise</span></td>
+            <td><span class="tag tag-green">WebSocket</span></td>
+            <td>Best voice quality</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Vapi.ai</div><div class="cell-model">Platform</div></td>
+            <td>Any STT + LLM + TTS</td>
+            <td>$0.05/min (~$3/hr) + components</td>
+            <td><span class="tag tag-blue">~350ms</span></td>
+            <td>Depends on TTS</td>
+            <td>Depends on STT</td>
+            <td><span class="tag tag-orange">Business</span></td>
+            <td><span class="tag tag-green">✓ Phone</span></td>
+            <td>Telephony + flexibility</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">Retell AI</div><div class="cell-model">Platform</div></td>
+            <td>Any STT + LLM + TTS</td>
+            <td>$0.07/min (~$4.2/hr) + components</td>
+            <td><span class="tag tag-blue">~350ms</span></td>
+            <td>Depends on TTS</td>
+            <td>Depends on STT</td>
+            <td><span class="tag tag-orange">Business</span></td>
+            <td><span class="tag tag-green">✓ Phone</span></td>
+            <td>Telephony simplicity</td>
+          </tr>
+          <tr>
+            <td><div class="cell-provider">LiveKit</div><div class="cell-model">Agents Framework</div></td>
+            <td>Bring all your own</td>
+            <td>Infrastructure only ~$1–2/hr</td>
+            <td><span class="tag tag-green">~300ms</span></td>
+            <td>Depends on TTS</td>
+            <td>Depends</td>
+            <td><span class="tag tag-green">Self-managed</span></td>
+            <td><span class="tag tag-green">✓ WebRTC</span></td>
+            <td>Full control, scale</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="provider-grid">
+      <div class="provider-card winner">
+        <div class="card-badge badge-winner">Best Value Bundle</div>
+        <div class="card-provider-name">Deepgram Voice API</div>
+        <div class="card-model-name">Nova-3 + Aura-2 + BYOLLM</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Cost / hour</div><div class="metric-value good">$4.50</div></div>
+          <div class="metric"><div class="metric-label">vs OpenAI RT</div><div class="metric-value good">75% cheaper</div></div>
+          <div class="metric"><div class="metric-label">VAQI Score</div><div class="metric-value good">71.5 #1</div></div>
+          <div class="metric"><div class="metric-label">Latency</div><div class="metric-value good">~300ms</div></div>
+        </div>
+        <div class="card-notes">Ranked #1 on VAQI (Voice Agent Quality Index), beating OpenAI by 6.4% and ElevenLabs by 29.3%. Single WebSocket, predictable billing. Bring your own LLM (Claude works great). $4.50/hr is the lowest complete bundle cost.</div>
+      </div>
+      <div class="provider-card">
+        <div class="card-badge badge-caution">Voice Quality Pick</div>
+        <div class="card-provider-name">ElevenLabs Conv. AI</div>
+        <div class="card-model-name">Flash v2.5 + Your LLM</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Cost / hour</div><div class="metric-value mid">~$5.90</div></div>
+          <div class="metric"><div class="metric-label">Voice quality</div><div class="metric-value good">9.5/10</div></div>
+          <div class="metric"><div class="metric-label">Latency</div><div class="metric-value good">~250ms</div></div>
+          <div class="metric"><div class="metric-label">Languages</div><div class="metric-value mid">32</div></div>
+        </div>
+        <div class="card-notes">Best for voice quality and emotional warmth — critical for a therapeutic context. Slightly higher cost than Deepgram but worth it if user experience is the top priority. LLM costs passed through separately now.</div>
+      </div>
+      <div class="provider-card">
+        <div class="card-badge badge-budget">Most Flexible</div>
+        <div class="card-provider-name">Vapi.ai / Retell</div>
+        <div class="card-model-name">Orchestration Platform</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-label">Platform fee</div><div class="metric-value mid">$0.05–0.07/min</div></div>
+          <div class="metric"><div class="metric-label">Phone calls</div><div class="metric-value good">Native ✓</div></td></div>
+          <div class="metric"><div class="metric-label">STT choice</div><div class="metric-value good">Any</div></div>
+          <div class="metric"><div class="metric-label">LLM choice</div><div class="metric-value good">Any</div></div>
+        </div>
+        <div class="card-notes">Telephony-first platforms great for actual phone number integration (like Ash). Vapi supports Twilio/SIP natively. You mix-and-match STT+LLM+TTS. Add $0.05/min overhead but saves engineering time significantly.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COST TAB -->
+  <div id="tab-costs" class="tab-content">
+    <div class="section-label">Real-world cost at scale — 10 min therapy session</div>
+    <p style="color:var(--text-dim);margin-bottom:28px;font-size:12px;">Assumptions: 10-min call, user speaks ~4min, AI speaks ~6min, ~5,000 LLM tokens total. Claude Haiku used as LLM ($0.80/$4 per 1M tokens).</p>
+
+    <div class="cost-breakdown">
+      <div class="cost-card" style="border-color:rgba(126,232,162,0.25)">
+        <div class="cost-card-header" style="color:var(--accent)">🏆 Stack 1: Best Balance<br><small style="font-weight:400;color:var(--text-dim)">Deepgram Nova-3 + Claude Haiku + ElevenLabs Flash</small></div>
+        <div class="cost-line"><span class="cost-desc">STT: 4 min × $0.0043</span><span class="cost-val">$0.017</span></div>
+        <div class="cost-line"><span class="cost-desc">LLM: 5K tokens (Claude Haiku)</span><span class="cost-val">$0.008</span></div>
+        <div class="cost-line"><span class="cost-desc">TTS: ~4,500 chars × $0.050/1K</span><span class="cost-val">$0.225</span></div>
+        <div class="cost-line"><span class="cost-desc">Telephony (Twilio ~$0.013/min)</span><span class="cost-val">$0.130</span></div>
+        <div class="cost-total"><span>Per 10-min session</span><span class="total-val">$0.38</span></div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:8px">1,000 sessions/mo ≈ $380/mo</div>
+      </div>
+
+      <div class="cost-card">
+        <div class="cost-card-header">Stack 2: Cheapest Possible<br><small style="font-weight:400;color:var(--text-dim)">Deepgram Nova-3 + Claude Haiku + Deepgram Aura-2</small></div>
+        <div class="cost-line"><span class="cost-desc">STT: 4 min × $0.0043</span><span class="cost-val">$0.017</span></div>
+        <div class="cost-line"><span class="cost-desc">LLM: 5K tokens (Claude Haiku)</span><span class="cost-val">$0.008</span></div>
+        <div class="cost-line"><span class="cost-desc">TTS: ~4,500 chars × $0.030/1K</span><span class="cost-val">$0.135</span></div>
+        <div class="cost-line"><span class="cost-desc">Telephony (Twilio)</span><span class="cost-val">$0.130</span></div>
+        <div class="cost-total"><span>Per 10-min session</span><span class="total-val" style="color:var(--accent3)">$0.29</span></div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:8px">1,000 sessions/mo ≈ $290/mo</div>
+      </div>
+
+      <div class="cost-card">
+        <div class="cost-card-header">Stack 3: Premium Quality<br><small style="font-weight:400;color:var(--text-dim)">AssemblyAI U-2 + GPT-4o + ElevenLabs Flash</small></div>
+        <div class="cost-line"><span class="cost-desc">STT: 4 min × $0.015</span><span class="cost-val">$0.060</span></div>
+        <div class="cost-line"><span class="cost-desc">LLM: 5K tokens (GPT-4o)</span><span class="cost-val">$0.075</span></div>
+        <div class="cost-line"><span class="cost-desc">TTS: ~4,500 chars × $0.050/1K</span><span class="cost-val">$0.225</span></div>
+        <div class="cost-line"><span class="cost-desc">Telephony (Twilio)</span><span class="cost-val">$0.130</span></div>
+        <div class="cost-total"><span>Per 10-min session</span><span class="total-val" style="color:var(--accent4)">$0.49</span></div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:8px">1,000 sessions/mo ≈ $490/mo</div>
+      </div>
+
+      <div class="cost-card">
+        <div class="cost-card-header">Stack 4: Deepgram Bundle<br><small style="font-weight:400;color:var(--text-min)">Deepgram Voice Agent API (all-in)</small></div>
+        <div class="cost-line"><span class="cost-desc">Bundle: $4.50/hr × 0.167 hr</span><span class="cost-val">$0.752</span></div>
+        <div class="cost-line"><span class="cost-desc">Includes STT + TTS orchestration</span><span class="cost-val">—</span></div>
+        <div class="cost-line"><span class="cost-desc">LLM: 5K tokens (Claude Haiku)</span><span class="cost-val">$0.008</span></div>
+        <div class="cost-line"><span class="cost-desc">Telephony (Twilio)</span><span class="cost-val">$0.130</span></div>
+        <div class="cost-total"><span>Per 10-min session</span><span class="total-val" style="color:var(--accent4)">$0.89</span></div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:8px">Simpler setup but more expensive than unbundled</div>
+      </div>
+
+      <div class="cost-card">
+        <div class="cost-card-header">Stack 5: OpenAI Realtime<br><small style="font-weight:400;color:var(--text-dim)">gpt-4o-realtime (all-in-one)</small></div>
+        <div class="cost-line"><span class="cost-desc">Audio in: 4 min × $0.032/min</span><span class="cost-val">$0.128</span></div>
+        <div class="cost-line"><span class="cost-desc">Audio out: 6 min × $0.064/min</span><span class="cost-val">$0.384</span></div>
+        <div class="cost-line"><span class="cost-desc">Text tokens: ~1.5K × $0.004/1K</span><span class="cost-val">$0.006</span></div>
+        <div class="cost-line"><span class="cost-desc">Telephony (Twilio)</span><span class="cost-val">$0.130</span></div>
+        <div class="cost-total"><span>Per 10-min session</span><span class="total-val" style="color:var(--accent4)">$0.65</span></div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:8px">1,000 sessions/mo ≈ $650/mo — most expensive</div>
+      </div>
+
+      <div class="cost-card" style="border-color:rgba(245,166,35,0.25)">
+        <div class="cost-card-header" style="color:var(--accent3)">Stack 6: Vapi Platform<br><small style="font-weight:400;color:var(--text-dim)">Vapi + Deepgram + Claude + ElevenLabs</small></div>
+        <div class="cost-line"><span class="cost-desc">Vapi platform fee: 10 min</span><span class="cost-val">$0.50</span></div>
+        <div class="cost-line"><span class="cost-desc">STT: Deepgram included</span><span class="cost-val">~$0.017</span></div>
+        <div class="cost-line"><span class="cost-desc">LLM: Claude Haiku</span><span class="cost-val">$0.008</span></div>
+        <div class="cost-line"><span class="cost-desc">TTS: ElevenLabs Flash</span><span class="cost-val">$0.225</span></div>
+        <div class="cost-total"><span>Per 10-min session</span><span class="total-val" style="color:var(--accent3)">$0.75</span></div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:8px">Higher cost but zero telephony engineering needed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WINNER TAB -->
+  <div id="tab-winner" class="tab-content">
+
+    <!-- THE WINNER -->
+    <div class="winner-section">
+      <div class="winner-title">Recommended Stack for AI Therapist</div>
+      <div class="winner-stack">
+        <span>Deepgram Nova-3</span>
+        <span class="sep">+</span>
+        <span>Claude Haiku / Sonnet</span>
+        <span class="sep">+</span>
+        <span>ElevenLabs Flash v2.5</span>
+      </div>
+      <div class="winner-meta">
+        <div class="winner-meta-item">
+          <div class="winner-meta-label">Cost / 10 min call</div>
+          <div class="winner-meta-value">~$0.38</div>
+        </div>
+        <div class="winner-meta-item">
+          <div class="winner-meta-label">Total latency</div>
+          <div class="winner-meta-value">~600ms</div>
+        </div>
+        <div class="winner-meta-item">
+          <div class="winner-meta-label">Language support</div>
+          <div class="winner-meta-value">32+ langs</div>
+        </div>
+        <div class="winner-meta-item">
+          <div class="winner-meta-label">Human-like TTS</div>
+          <div class="winner-meta-value">9.8 / 10</div>
+        </div>
+        <div class="winner-meta-item">
+          <div class="winner-meta-label">STT Accuracy</div>
+          <div class="winner-meta-value">18.3% WER</div>
+        </div>
+        <div class="winner-meta-item">
+          <div class="winner-meta-label">HIPAA ready</div>
+          <div class="winner-meta-value">✓ Yes</div>
+        </div>
+      </div>
+      <div class="winner-why">
+        <strong style="color:var(--text)">Why this stack wins for AI therapy:</strong><br><br>
+        Deepgram Nova-3 is the gold standard for STT in voice agents — sub-150ms TTFT, $0.0043/min (cheapest by far), HIPAA compliant, and ranked #1 on the independent VAQI benchmark. The Flux model adds native end-of-turn detection so the AI knows when someone's finished speaking — critical for natural conversation.<br><br>
+        Claude Haiku (or Sonnet for more nuanced therapy responses) is the ideal LLM — long context window for session memory, safe output defaults, and emotionally intelligent responses. Far better than GPT-4o-mini for therapeutic content. Pair with Anthropic's safety defaults.<br><br>
+        ElevenLabs Flash v2.5 is the only TTS that sounds warm and genuinely human enough for a therapeutic context. At 75ms TTFB it's the fastest quality voice. The emotional range of ElevenLabs voices is unmatched — this is the one non-negotiable premium spend. The 3,000+ voice library means you can offer users different voice personas.<br><br>
+        For telephony infrastructure: use <strong style="color:var(--accent)">Vapi.ai or Retell AI</strong> as the orchestration layer (like Ash). They handle phone numbers, SIP, WebSockets, call routing natively. Or build directly on LiveKit + Twilio for full control.
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div class="section-label">Recommended architecture</div>
+    <div class="arch-boxes">
+      <div class="arch-box">
+        <div class="arch-step">Step 1 — Telephony</div>
+        <div class="arch-tech">Vapi.ai or Retell</div>
+        <div class="arch-model">WebRTC / SIP / PSTN</div>
+        <div class="arch-detail">Handles inbound/outbound calls, phone number provisioning, call routing, barge-in detection. Acts like Ash — users call a real number. $0.05–0.07/min overhead is worth the saved engineering time.</div>
+      </div>
+      <div class="arch-box">
+        <div class="arch-step">Step 2 — Speech Recognition</div>
+        <div class="arch-tech">Deepgram Nova-3</div>
+        <div class="arch-model">nova-3 + flux (streaming)</div>
+        <div class="arch-detail">WebSocket streaming, ~150ms TTFT. $0.0043/min. End-of-turn detection with Flux model eliminates VAD latency. HIPAA BAA available. Handles accents, emotional speech, and noisy environments well.</div>
+      </div>
+      <div class="arch-box">
+        <div class="arch-step">Step 3 — LLM Brain</div>
+        <div class="arch-tech">Claude Haiku / Sonnet</div>
+        <div class="arch-model">claude-haiku-4-5 / claude-sonnet-4-5</div>
+        <div class="arch-detail">200K token context for full session memory. Streaming responses for low latency. Haiku for speed+cost ($0.80/$4 per 1M), Sonnet for deeper empathy and nuance. System prompt defines the therapist persona, safety guardrails, and CBT/DBT frameworks.</div>
+      </div>
+      <div class="arch-box">
+        <div class="arch-step">Step 4 — Voice Synthesis</div>
+        <div class="arch-tech">ElevenLabs Flash v2.5</div>
+        <div class="arch-model">eleven_flash_v2_5</div>
+        <div class="arch-detail">75ms TTFB, streaming synthesis. Choose a warm, calm female or male voice from the 3,000+ library. Custom voice cloning option lets you create a unique "therapist" persona voice. $0.050/1K chars.</div>
+      </div>
+      <div class="arch-box">
+        <div class="arch-step">Step 5 — Session Memory</div>
+        <div class="arch-tech">Memory Layer</div>
+        <div class="arch-model">Mem0 / Custom DB</div>
+        <div class="arch-detail">Store session transcripts, user mood patterns, therapy progress, past topics. Feed summarized context into each new session via the Claude system prompt. Enables continuity across calls — vital for therapy.</div>
+      </div>
+      <div class="arch-box">
+        <div class="arch-step">Step 6 — Safety & Compliance</div>
+        <div class="arch-tech">Guardrails</div>
+        <div class="arch-model">Crisis detection + HIPAA</div>
+        <div class="arch-detail">Real-time keyword detection for crisis language → escalate to human. Anthropic's built-in safety. HIPAA BAAs from Deepgram + ElevenLabs (enterprise). All audio encrypted in transit. Do not store raw audio; store only transcripts.</div>
+      </div>
+    </div>
+
+    <!-- LANGUAGE COVERAGE -->
+    <div class="section-label">Language coverage — ElevenLabs Flash v2.5</div>
+    <div class="lang-grid">
+      <div class="lang-pill supported">English</div>
+      <div class="lang-pill supported">Spanish</div>
+      <div class="lang-pill supported">French</div>
+      <div class="lang-pill supported">German</div>
+      <div class="lang-pill supported">Italian</div>
+      <div class="lang-pill supported">Portuguese</div>
+      <div class="lang-pill supported">Polish</div>
+      <div class="lang-pill supported">Hindi</div>
+      <div class="lang-pill supported">Japanese</div>
+      <div class="lang-pill supported">Korean</div>
+      <div class="lang-pill supported">Chinese (Mandarin)</div>
+      <div class="lang-pill supported">Arabic</div>
+      <div class="lang-pill supported">Turkish</div>
+      <div class="lang-pill supported">Dutch</div>
+      <div class="lang-pill supported">Swedish</div>
+      <div class="lang-pill supported">Norwegian</div>
+      <div class="lang-pill supported">Danish</div>
+      <div class="lang-pill supported">Finnish</div>
+      <div class="lang-pill supported">Romanian</div>
+      <div class="lang-pill supported">Hungarian</div>
+      <div class="lang-pill supported">Czech</div>
+      <div class="lang-pill supported">Slovak</div>
+      <div class="lang-pill supported">Croatian</div>
+      <div class="lang-pill supported">Ukrainian</div>
+      <div class="lang-pill supported">Greek</div>
+      <div class="lang-pill supported">Malay</div>
+      <div class="lang-pill supported">Indonesian</div>
+      <div class="lang-pill supported">Filipino</div>
+      <div class="lang-pill supported">Vietnamese</div>
+      <div class="lang-pill supported">Thai</div>
+      <div class="lang-pill supported">Bulgarian</div>
+      <div class="lang-pill supported">Russian</div>
+      <div class="lang-pill">Swahili ⚠️</div>
+      <div class="lang-pill">Urdu ⚠️</div>
+      <div class="lang-pill">Bengali ⚠️</div>
+      <div class="lang-pill">Tamil ⚠️</div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:40px">⚠️ = Not supported by ElevenLabs. Use OpenAI gpt-4o-transcribe (STT) + Azure Neural TTS for these languages as a fallback.</p>
+
+    <!-- QUICK DECISION -->
+    <div class="section-label">Quick decision guide</div>
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr><th>Your Priority</th><th>Best Choice</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Lowest cost possible</td><td><span style="color:var(--accent);font-weight:700">Deepgram Nova-3 + Haiku + Deepgram Aura-2</span></td><td>~$0.29/session, both STT+TTS from one vendor</td></tr>
+          <tr class="highlight-row"><td>Best balance (recommended)</td><td><span style="color:var(--accent);font-weight:700">Deepgram + Claude + ElevenLabs Flash</span></td><td>~$0.38/session, warmest voice + fastest STT</td></tr>
+          <tr><td>Best voice quality</td><td><span style="color:var(--accent2);font-weight:700">ElevenLabs Conv. AI + Claude</span></td><td>~$0.50/session, industry-best TTS</td></tr>
+          <tr><td>100+ languages</td><td><span style="color:var(--accent2);font-weight:700">OpenAI gpt-4o-transcribe STT + Azure TTS</span></td><td>Broadest language support anywhere</td></tr>
+          <tr><td>Phone call support (like Ash)</td><td><span style="color:var(--accent3);font-weight:700">Vapi.ai or Retell AI as orchestrator</span></td><td>Native telephony, number provisioning, SIP</td></tr>
+          <tr><td>Zero engineering setup</td><td><span style="color:var(--accent3);font-weight:700">OpenAI Realtime API</span></td><td>One API call, all-in-one, but 4× more expensive</td></tr>
+          <tr><td>Highest accuracy / medical</td><td><span style="color:var(--accent2);font-weight:700">AssemblyAI Universal-2 STT</span></td><td>14.5% WER (best), strong domain models</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="footnote">
+    <strong>Sources & methodology:</strong> Pricing verified Feb 2026 against Deepgram, ElevenLabs, OpenAI, AssemblyAI, Google Cloud, Azure, and AWS pricing pages. WER figures from Artificial Analysis independent benchmarks (not provider-reported). Latency from Introl.com Dec 2025 infrastructure analysis. VAQI ranking from Deepgram internal testing (independent verification recommended). Cost estimates assume typical therapy session patterns. Actual costs vary by conversation length, silence handling, and LLM prompt size. Always test with your specific audio conditions before committing.<br><br>
+    ⚠️ Note: ElevenLabs changed LLM pass-through pricing in June 2025 — verify current Conversational AI bundle pricing directly. OpenAI Realtime mini pricing can swing 2–3× based on system prompt size.
+  </div>
+
+</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const ids = ['stt','tts','endtoend','costs','winner'];
+    t.classList.toggle('active', ids[i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => {
+    c.classList.remove('active');
+  });
+  document.getElementById('tab-' + name).classList.add('active');
+}
+</script>
+</body>
+</html>
